@@ -1,20 +1,20 @@
-import { getAdjectives } from "./data.js";
-
 let adjectives;
 let sortDirection = "up";
+let data;
 
 function init() {
-	//TODO: 1 Data ophalen via getAdjectives
-	let data = getAdjectives();
+	const URL = "https://dev2-prima.onrender.com/adjectives";
 
-	//TODO: 2 data parsen (omzetten)
-	adjectives = JSON.parse(data);
-	console.log(adjectives);
-
-	//TODO: 3 Call render functie
-	render();
-	//TODO: 4 Call AddSortEvents
-	addSortEvents();
+	fetch(URL)
+		.then(function (response) {
+			return response.json(response);
+		})
+		.then(function (data) {
+			console.log(data);
+			adjectives = data;
+			render();
+			addSortEvents();
+		});
 }
 
 function addSortEvents() {
@@ -89,9 +89,29 @@ function render() {
 	addVoteEvents();
 }
 
-function upVote(target) {}
+function upVote(target) {
+	console.log("Upvote", target.value);
 
-function downVote(target) {}
+	fetch(`https://dev2-prima.onrender.com/upvote/${target.value}`).then(
+		function (response) {
+			console.log("Upvote complete");
+			init();
+		}
+	);
+	/*updateScore(target.value, 0.1);
+	render(); */
+}
+
+function downVote(target) {
+	console.log("Downvote", target.value);
+
+	fetch(`https://dev2-prima.onrender.com/downvote/${target.value}`).then(
+		function (response) {
+			console.log("Downvote complete");
+			init();
+		}
+	);
+}
 
 function updateScore(word, scoreChange) {
 	const foundIndex = adjectives.findIndex(function (item, index) {
